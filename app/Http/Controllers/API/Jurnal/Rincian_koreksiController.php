@@ -13,6 +13,9 @@ use App\Http\Resources\Jurnal\Rincian_koreksiCollection;
 use App\Http\Resources\Jurnal\JurnalCollection;
 use App\Http\Resources\Jurnal\KibCollection;
 use Validator;
+use DB;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class Rincian_koreksiController extends BaseController
 {
@@ -49,7 +52,7 @@ class Rincian_koreksiController extends BaseController
 
     public function getAvailableAset(Request $request, $nomor_lokasi)
     {
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $rincian_koreksis = new KibCollection(Kib::select('id_aset','kode_108','nama_barang','harga_satuan','saldo_barang', 'no_register')
         ->where('nomor_lokasi', 'like', '%'.$nomor_lokasi.'%')
@@ -62,7 +65,7 @@ class Rincian_koreksiController extends BaseController
 
     public function getAvailableAsetBerjalan(Request $request, $nomor_lokasi)
     {
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $rincian_koreksis = new KibCollection(Kib::select('id_aset','kode_108','nama_barang','harga_satuan','saldo_barang', 'no_register')
         ->where('nomor_lokasi', 'like', '%'.$nomor_lokasi.'%')
@@ -90,7 +93,7 @@ class Rincian_koreksiController extends BaseController
         $input = $request->all();
         $kode_108 = substr($input["kode_108"], 0, 11);
         $nomor_lokasi = $input["nomor_lokasi"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $input["tahun_spj"] = $tahun_spj;
         
@@ -104,7 +107,7 @@ class Rincian_koreksiController extends BaseController
     {
         $input = $request->all();
 
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
         $id_aset = $input["id_aset"];
         $nomor_lokasi = $input["nomor_lokasi"];
         $no_key = $input["no_key"];

@@ -16,7 +16,10 @@ use App\Models\Jurnal\Rincian_koreksi;
 use App\Http\Resources\Jurnal\Rincian_masukCollection;
 use App\Models\Jurnal\Rincian_keluar;
 use App\Http\Resources\Jurnal\Rincian_keluarCollection;
+use DB;
 use Validator;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class JurnalController extends BaseController
 {
@@ -157,7 +160,7 @@ class JurnalController extends BaseController
         $input = $request->all();
 
         $nomor_lokasi = $input["nomor_lokasi"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
         $kode_jurnal = $input["kode_jurnal"];
 
         $max_no_ba = Jurnal::select('no_ba_penerimaan')->where([
@@ -209,7 +212,7 @@ class JurnalController extends BaseController
         $input = $request->all();
 
         $nomor_lokasi = $input["nomor_lokasi"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $max_no_ba = Jurnal::select('no_ba_penerimaan')->where([
             ['nomor_lokasi', '=', $nomor_lokasi],
@@ -297,7 +300,7 @@ class JurnalController extends BaseController
     {
         $input = $request->all();
 
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
         $no_key = $input["no_key"];
 
         $jurnal_keluar = Jurnal::where('no_key', $input["no_key"])->first();
@@ -709,6 +712,7 @@ class JurnalController extends BaseController
 
             foreach ($no_key as $key) {
                 $aset_kibs = Kib::where('id_aset', $key["no_register"])->get();
+                $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
                 if (isset($aset_kibs)) {
 
@@ -719,7 +723,7 @@ class JurnalController extends BaseController
                             $rKeluar = Rincian_keluar::where('no_key', $ak["no_key"])->get();
 
                             foreach ($rKeluar as $rincian_keluar) {
-                                if ($rincian_keluar["tahun_spj"] < 2019) {
+                                if ($rincian_keluar["tahun_spj"] < $tahun_spj) {
                                     $kibs_awal = Kib_awal::where('id_aset', $rincian_keluar["id_aset"])->first();
                                     $rincian_masuk = Rincian_masuk::where('id_aset', $rincian_keluar["id_aset"])->first();
 
@@ -802,7 +806,7 @@ class JurnalController extends BaseController
 
                         $rincianKeluar = Rincian_keluar::where('id_aset', $rm["no_register"])->first();
 
-                        if ($jurnal["tahun_spj"] >= 2019) {
+                        if ($jurnal["tahun_spj"] >= $tahun_spj) {
                             $rincianMasuk = Rincian_masuk::where('nomor_lokasi', 'LIKE', '%'.$jurnal["ke_lokasi"].'%')->where('id_aset', 'LIKE', '%'.$rm["id_aset"].'%')->first();
                             $kibs = Kib::where('nomor_lokasi', 'LIKE', '%'.$rincianMasuk["nomor_lokasi"].'%')->where('id_aset', 'LIKE', '%'.$rincianMasuk["id_aset"].'%')->first();
 

@@ -16,6 +16,9 @@ use App\Http\Resources\Jurnal\ReklasifikasiCollection;
 use App\Exports\KibsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Validator;
+use DB;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class KibController extends BaseController
 {
@@ -53,7 +56,7 @@ class KibController extends BaseController
     public function getListByJurnalLokasi(Request $request, $kode_jurnal, $nomor_lokasi)
     {
         $pagination = (int)$request->header('Pagination');
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         if($pagination === 0) {
             $kibs = new KibCollection(Kib::select('id_aset', 'no_key', 'nama_barang', 'merk_alamat', 'tipe', 'bidang_barang', 'harga_total', 'harga_total_plus_pajak_saldo')->where('kode_jurnal', $kode_jurnal)->where('nomor_lokasi', 'like', '%'. $nomor_lokasi .'%')->where('tahun_spj', $tahun_spj)->get());

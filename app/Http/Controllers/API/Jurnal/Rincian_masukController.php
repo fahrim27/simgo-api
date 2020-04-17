@@ -24,6 +24,9 @@ use App\Http\Resources\Jurnal\JurnalCollection;
 use App\Http\Resources\Jurnal\ReklasifikasiCollection;
 use App\Http\Resources\Jurnal\KibCollection;
 use Validator;
+use DB;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class Rincian_masukController extends BaseController
 {
@@ -247,7 +250,7 @@ class Rincian_masukController extends BaseController
 
         $kode_108 = substr($input["kode_108"], 0, 11);
         $nomor_lokasi = $input["nomor_lokasi"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $input["tahun_spj"] = $tahun_spj;
         $input["sumber_dana"] = "02";
@@ -545,7 +548,7 @@ class Rincian_masukController extends BaseController
         $kode_108 = substr($input["kode_108"], 0, 11);
         $nomor_lokasi = $input["nomor_lokasi"];
         $no_key = $input["no_key"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $jurnal = Jurnal::select('no_key','terkunci','nomor_lokasi','tahun_spj','no_ba_penerimaan','kode_jurnal','tgl_spk_sp_dokumen')->where('no_key', $no_key)->first();
 

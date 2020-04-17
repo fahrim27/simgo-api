@@ -25,6 +25,9 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use DB;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class PenyusutanReklasKeluar108Export implements FromCollection, WithHeadings, WithEvents, WithTitle, WithColumnFormatting, WithHeadingRow, WithCustomStartCell, ShouldAutoSize
 {
@@ -42,7 +45,7 @@ class PenyusutanReklasKeluar108Export implements FromCollection, WithHeadings, W
         $this->jenis_aset = $args['jenis_aset'];
 		$this->nama_lokasi = $args['nama_lokasi'];
         $this->nama_jurnal = $args['nama_jurnal'];
-        $this->tahun_sekarang = date('Y')-1;
+        $this->tahun_sekarang = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $this->total_nilai_perolehan = 0;
         $this->total_akumulasi_penyusutan = 0;
@@ -80,7 +83,7 @@ class PenyusutanReklasKeluar108Export implements FromCollection, WithHeadings, W
         $i = 0;
         $j = 0;
         $jumlah_barang = 0;
-        $tahun_acuan = date('Y')-1;
+        $tahun_acuan = DB::table('tahun_spj')->select('tahun')->first()->tahun;
         $masa_terpakai;
         $total_nilai_perolehan = 0;
         $total_akumulasi_penyusutan = 0;

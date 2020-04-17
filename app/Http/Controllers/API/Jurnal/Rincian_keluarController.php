@@ -10,6 +10,9 @@ use App\Http\Resources\Jurnal\Rincian_keluarCollection;
 use App\Http\Resources\Jurnal\JurnalCollection;
 use App\Http\Resources\Jurnal\KibCollection;
 use Validator;
+use DB;
+
+//penggantian tahun menggunakan db selector dengan implement DB class usage
 
 class Rincian_keluarController extends BaseController
 {
@@ -71,7 +74,7 @@ class Rincian_keluarController extends BaseController
         $input = $request->all();
         $kode_108 = substr($input["kode_108"], 0, 11);
         $nomor_lokasi = $input["nomor_lokasi"];
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
 
         $input["tahun_spj"] = $tahun_spj;
         
@@ -85,7 +88,7 @@ class Rincian_keluarController extends BaseController
     {
         $input = $request->all();
 
-        $tahun_spj = date('Y') - 1;
+        $tahun_spj = DB::table('tahun_spj')->select('tahun')->first()->tahun;
         $id_aset = $input["id_aset"];
 
         $aset = Kib::where('id_aset', $id_aset)->first();
